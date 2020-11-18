@@ -1,13 +1,13 @@
-const express = require("express");  
-const bodyParser = require("body-parser");  
-const fs = require("fs");
-const cookieParser = require('cookie-parser');
+import express from "express";  
+import { urlencoded, json } from "body-parser";  
+import { readFile } from "fs";
+import cookieParser from 'cookie-parser';
 const app = express();  
-const sha256 = require('js-sha256');
+import sha256 from 'js-sha256';
 
   
-app.use(bodyParser.urlencoded({ extended:  false  }));  
-app.use(bodyParser.json()); 
+app.use(urlencoded({ extended:  false  }));  
+app.use(json()); 
 app.use(cookieParser()); 
   
 
@@ -32,7 +32,7 @@ function checkData(name, pw, url){
     if (userInfo.hasOwnProperty(name)){             
         if(npw !== userInfo[name].pw){
             msg = '비밀번호 틀림';
-            return msg; // 비밀번호 틀렸음
+            return msg;
         } 
 
         if(!url||url[0]===''){
@@ -41,17 +41,16 @@ function checkData(name, pw, url){
             return msg;
             }
 
-
         }else if(url[url.length-1] === userInfo[name].ytaddr){
             msg = '저장된 URL이나 이거나 똑같스';
-            return msg; // 저장된 값이나 이거나 똑같
+            return msg;
         }else{
             userInfo[name].ytaddr = url[url.length-1]; //기존url업데이트
         }
     }    else{ 
             if(!url||url[0]===''){
                 msg = '유저명 입력했는데 URL이 없네요';
-                return msg; //유저명입력했는데 URL은 없어..
+                return msg; 
             }
             //신규저장
             userInfo[name]= {
@@ -75,7 +74,7 @@ app.get('/',function (req,res) {
 
     }       
 
-    fs.readFile(__dirname + '/view/index.html', 'UTF-8',
+    readFile(__dirname + '/view/index.html', 'UTF-8',
          (err, data) => {
             var conv_data = data.replace(/#name#/g, name).replace(/#youtubeAddr#/g, youtubeAddr).replace(/#pw#/g, pw);
             //console.log(data);
@@ -94,12 +93,6 @@ app.get('/userinfo',function (req,res) {
     var inurl = req.query.youtube_addr.split('/');
 
     var checkMsg = checkData(inname, inpw, inurl);
-
-    // if(!userInfo[inname]){
-    //     console.log('입력값에 대한 userInfo가 없다는 뜻');
-    //     res.redirect('/');
-    //     return;
-    // }
 
     if(checkMsg){
         console.log(checkMsg);
@@ -120,6 +113,35 @@ app.get('/userinfo',function (req,res) {
     console.log('userInfo : ', userInfo);
 });
 
+
+app.get('/delete',function (req,res) {  
+
+    var inname = req.query.
+    
+    uname;
+    var inpw = req.query.upw;
+    var inurl = req.query.url;
+
+    console.log(inname, inpw, inurl);
+
+    // if(checkMsg){
+    //     console.log(checkMsg);
+    //     res.redirect('/');
+    //     return;
+    // }
+    
+    // res.cookie('uname', inname,{
+    //     maxAge:1000000
+    //  });
+
+    // res.cookie('upw', req.query.upw,{
+    //     maxAge:1000000
+    //  });     
+   
+   
+    res.redirect('/');  
+    console.log('userInfo : ', userInfo);
+});
 
 
 //removecookie
