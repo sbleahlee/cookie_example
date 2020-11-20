@@ -4,7 +4,7 @@ const app = express();
 import { json } from 'body-parser';
 const port =process.env.PORT || 3001;
 //서버쪽에 더많은 api를 만들기위해 server.js 에 route 를 적용
-import route from './routes/index';
+import route from './routes/index.js';
 
 // app.use(cors());
 
@@ -14,7 +14,7 @@ app.use(json());
 
 // /api 로 오는것은 route 에서 처리하도록 하고 /api/ 다음으로 뒤에 오는것을 index.js router.get('/',...)에서 정의
 //https://hello-bryan.tistory.com/122
-app.use('/api', route); 
+app.use('/', route); 
 
 app.listen(port, ()=>{
     console.log(`express is running on ${port}`);
