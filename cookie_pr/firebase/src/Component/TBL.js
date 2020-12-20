@@ -53,7 +53,7 @@ class TBL extends Component {
                     {users.map((user)=>(            
                         <TableRow key={user.id.toString()}>
                             <TableCell>
-                                {user.id.toString()}
+                                {user.uid.toString()}
                             </TableCell>
                             <TableCell align="middle">
                                 {user.name.toString()}

@@ -22,8 +22,6 @@ class BTN extends Component {
 
     clickBtn(){
 
-        var userinfo = {};
-
         fire.firestore()
         .collection('users')
         .onSnapshot(snap => {
@@ -50,8 +48,7 @@ class BTN extends Component {
     render(){
         
         console.log('props : ', this.props); // {}
-        console.log('state: ', this.state); // {user:Array}
-        
+        console.log('state: ', this.state); // {user:Array}        
 
         return ( 
             <div id = 'button'>                
