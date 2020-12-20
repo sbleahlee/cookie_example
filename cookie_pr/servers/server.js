@@ -1,21 +1,13 @@
-import express from 'express';
+//서버생성코드 (https://gongbu-ing.tistory.com/40)
+//포트번호 3001 할당
+//'/api' 경로 요청 라우팅
+const express = require('express');
 const app = express();
-// const cors = require('cors');
-import { json } from 'body-parser';
-const port =process.env.PORT || 3001;
-//서버쪽에 더많은 api를 만들기위해 server.js 에 route 를 적용
-import route from './routes/index.js';
+const api = require('./routes/index');
+const userinfo = require('./routes/userinfo');
+const port = process.env.PORT || 3001;
 
-// app.use(cors());
+app.use('/api', api);
+app.use('/userinfo', userinfo);
 
-app.use(json());
-////서버단에서 Username 받아오기
-// app.use('/api', (req, res)=> res.json({username:'bryan'}));
-
-// /api 로 오는것은 route 에서 처리하도록 하고 /api/ 다음으로 뒤에 오는것을 index.js router.get('/',...)에서 정의
-//https://hello-bryan.tistory.com/122
-app.use('/', route); 
-
-app.listen(port, ()=>{
-    console.log(`express is running on ${port}`);
-})
+app.listen(port, ()=>{console.log('Node.js Server is running on port ${port}')});

@@ -1,17 +1,24 @@
-import express from "express";  
-import { urlencoded, json } from "body-parser";  
-import { readFile } from "fs";
-import cookieParser from 'cookie-parser';
+const express = require("express");  
+const bodyParser = require("body-parser");  
+const fs = require("fs");
+const cookieParser = require('cookie-parser');
 const app = express();  
-import sha256 from 'js-sha256';
+const sha256 = require('js-sha256');
 
   
-app.use(urlencoded({ extended:  false  }));  
-app.use(json()); 
+app.use(bodyParser.urlencoded({ extended:  false  }));  
+app.use(bodyParser.json()); 
 app.use(cookieParser()); 
   
 
-var userInfo = {}
+var userInfo = {
+    "user1" : {
+        upw : 'pw1',
+        ytaddr : 'FWC0kMnZ0EA'
+    }
+}
+
+var sessions = {}
 
 
 function checkData(name, pw, url){
@@ -32,7 +39,7 @@ function checkData(name, pw, url){
     if (userInfo.hasOwnProperty(name)){             
         if(npw !== userInfo[name].pw){
             msg = '비밀번호 틀림';
-            return msg;
+            return msg; // 비밀번호 틀렸음
         } 
 
         if(!url||url[0]===''){
@@ -41,16 +48,17 @@ function checkData(name, pw, url){
             return msg;
             }
 
+
         }else if(url[url.length-1] === userInfo[name].ytaddr){
             msg = '저장된 URL이나 이거나 똑같스';
-            return msg;
+            return msg; // 저장된 값이나 이거나 똑같
         }else{
             userInfo[name].ytaddr = url[url.length-1]; //기존url업데이트
         }
     }    else{ 
             if(!url||url[0]===''){
                 msg = '유저명 입력했는데 URL이 없네요';
-                return msg; 
+                return msg; //유저명입력했는데 URL은 없어..
             }
             //신규저장
             userInfo[name]= {
@@ -68,13 +76,23 @@ app.get('/',function (req,res) {
 
     if(req.cookies.uname){
         name = req.cookies.uname;
-        pw = req.cookies.upw;
+        //pw = req.cookies.upw;
+
+        const targetsession = req.cookies.loginInfo;
+
+        if (sessions[name] == targetsession){
+            console.log('session');
+            userInfo.forEach(el => {
+                youtubeAddr = el.youtubeAddr;
+            })
+        }
+        
         if(userInfo[name])
             youtubeAddr = 'https://www.youtu.be'+userInfo[name];
 
     }       
 
-    readFile(__dirname + '/view/index.html', 'UTF-8',
+    fs.readFile(__dirname + '/view/index.html', 'UTF-8',
          (err, data) => {
             var conv_data = data.replace(/#name#/g, name).replace(/#youtubeAddr#/g, youtubeAddr).replace(/#pw#/g, pw);
             //console.log(data);
@@ -94,8 +112,17 @@ app.get('/userinfo',function (req,res) {
 
     var checkMsg = checkData(inname, inpw, inurl);
 
+    // if(!userInfo[inname]){
+    //     console.log('입력값에 대한 userInfo가 없다는 뜻');
+    //     res.redirect('/');
+    //     return;
+    // }
+
     if(checkMsg){
         console.log(checkMsg);
+        const session = sha256(inname,inurl);
+        sessions[inname] = session;
+
         res.redirect('/');
         return;
     }
@@ -104,35 +131,9 @@ app.get('/userinfo',function (req,res) {
         maxAge:1000000
      });
 
-    res.cookie('upw', req.query.upw,{
+    res.cookie('loginInfo', sessions,{
         maxAge:1000000
-     });     
-   
-   
-    res.redirect('/');  
-    console.log('userInfo : ', userInfo);
-});
-
-
-app.get('/delete',function (req,res) {  
-
-    var inname = req.query.
-    
-    uname;
-    var inpw = req.query.upw;
-    var inurl = req.query.url;
-
-    console.log(inname, inpw, inurl);
-
-    // if(checkMsg){
-    //     console.log(checkMsg);
-    //     res.redirect('/');
-    //     return;
-    // }
-    
-    // res.cookie('uname', inname,{
-    //     maxAge:1000000
-    //  });
+     });
 
     // res.cookie('upw', req.query.upw,{
     //     maxAge:1000000
@@ -144,11 +145,13 @@ app.get('/delete',function (req,res) {
 });
 
 
+
 //removecookie
 app.get('/removecookie',function (req,res) {  
     console.log('removecookie')
     res.clearCookie('uname');
-    res.clearCookie('upw');
+    //res.clearCookie('upw');
+    res.clearCookie('loginInfo');
     res.redirect('/');  
 });
 

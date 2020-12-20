@@ -6,7 +6,6 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
-    <link rel="stylesheet" type="text/css" hef="/view/index.css">
 </head>
 
 <body>
@@ -19,13 +18,10 @@
 
     <div class="main-container container" style="margin-bottom: 100px;">
         <div class="col-md-12">
-            <div class = "btn_area">
+            <div id='context'>
 
             </div>
-            <div id="context">
-
-            </div>
-            <div id="youtube_context" style="margin-top: 30px;" class="embed-responsive embed-responsive-16by9">
+            <div id='youtube_context' style="margin-top: 30px;" class="embed-responsive embed-responsive-16by9">
 
             </div>
         </div>
@@ -36,10 +32,61 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
     <!--추후 indexfunc.js 로 변경해야 함. gitpod 링크 문제로 임시조치-->
-    <script type="text/javascript" src="/clnt.js" defer></script>
-    
+    <!--<script type="text/javascript" src="https://ea613683-91fd-4c9d-af25-273efc96c425.ws-eu01.gitpod.io/files/download/?id=b4e9e038-74e8-431f-82a3-43f8a06df204"></script>-->
 
 </body>
+
+
+
+<script>
+    const regiCookieInfoHtml = `
+    <form action="/userinfo">
+        <div class="form-group">
+            <label for="uname">Name:</label><br>
+            <input  class="form-control" type="text" id="uname" name="uname" value=""><br>
+            <label for="youtube_addr">Youtue:</label><br>
+            <input  class="form-control" type="text" id="youtube_addr" name="youtube_addr" value=""><br><br>
+            <label for="upw">Password:</label><br>
+            <input  class="form-control" type="text" id="upw" name="upw" value=""><br>
+            <input  class="btn btn-default" type="submit" value="Submit">
+        </div>
+    </form> 
+    `
+    const removeCookie = `
+    <form action="/removecookie">
+        <input  class="form-control" type="hidden" id="uname" name="uname" value="#name#"><br>
+        <input  class="form-control" type="hidden" id="upw" name="upw" value="#pw#"><br>
+        <input class="btn btn-warning" type="submit" value="remove cookie">
+    </form> 
+    `
+
+    const checkUser = `
+    <form action="/check">
+        <button class = "btn btn-primary" type = "button" onclick = "checkuser()">Check User </button>
+    </form>
+    `   
+
+    const youtubeAddr = `
+        <iframe class="embed-responsive-item" src="#youtubeAddr#" allowfullscreen></iframe>
+    `
+
+    function checkuser() {
+        alert('Username :\t #name# \nPassword : \t#pw#');
+    };
+
+
+    const name = $("#user").text();
+    if (name == 'guest') {
+        $("#context").html(regiCookieInfoHtml);
+
+    }
+    else {
+        $("#youtube_context").html(youtubeAddr);
+        $("#context").html(removeCookie);
+        $("#context").append(checkUser);        
+    }
+
+</script>
 
 
 </html>
